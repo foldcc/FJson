@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using UnityEngine;
 
 namespace Fjson.Core
@@ -22,22 +22,14 @@ namespace Fjson.Core
             _char = '?';
             _index = 0;
 
-            for (int i = 0; i < _jsonData.Length; i++)
+            while (_index < _jsonData.Length)
             {
-                if (_index < _jsonData.Length)
-                {
-                    JsonTokens.Add(parse());
-                }
-                else
-                {
-                    break;
-                }
+                JsonTokens.Add(parse());
             }
         }
 
         private JsonToken parse()
         {
-            _char = '?';
             do
             {
                 read();
@@ -45,7 +37,7 @@ namespace Fjson.Core
 
             if (isNull())
             {
-                return new JsonToken(TokenType.NULL , null);
+                return new JsonToken(TokenType.NULL , "null");
             }
             else if (_char == ',') 
             {
@@ -91,23 +83,45 @@ namespace Fjson.Core
             {
                 return new JsonToken(TokenType.END_DOC, "EOF");
             }
-            throw new DataException("Invalid JSON input.");
+            throw new DataException("Invalid JSON input : " + _char);
         }
 
         private JsonToken readString()
         {
-            
-            return null;
+            StringBuilder stringBuilder = new StringBuilder();
+            do
+            {
+                read();
+                if (_char == '"')
+                    break;
+                stringBuilder.Append(_char);
+            } while (true);
+
+            return new JsonToken(TokenType.STRING , stringBuilder.ToString());
         }
 
         private JsonToken readNum()
         {
-            return null;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(_char);
+            do
+            {
+                read();
+                if (!char.IsDigit(_char))
+                    break;
+                stringBuilder.Append(_char);
+            } while (true);
+            _index--;
+            return new JsonToken(TokenType.NUMBER , stringBuilder.ToString());
         }
 
 
         private void read()
         {
+            if (_index >= _jsonData.Length)
+            {
+                throw new DataException("Invalid JSON input. 'null' is error  " + _char);
+            }
             _char = _jsonData[_index];
             _index++;
         }
@@ -195,5 +209,6 @@ namespace Fjson.Core
             }
             return false;
         }
+        
     }
 }

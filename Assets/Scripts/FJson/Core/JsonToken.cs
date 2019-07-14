@@ -11,12 +11,12 @@ namespace Fjson.Core
             this.mValue = value;
         }
 
-        public TokenType GetType()
+        public TokenType GetTokenType()
         {
             return mType;
         }
 
-        public string GetValue()
+        public string GetTokenValue()
         {
             return mValue;
         }
