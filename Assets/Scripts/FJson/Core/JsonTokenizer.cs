@@ -42,11 +42,11 @@ namespace Fjson.Core
             else if (_char == ',') 
             {
                 return new JsonToken(TokenType.COMMA, ",");
-            } 
+            }
             else if (_char == ':') 
             {
                 return new JsonToken(TokenType.COLON, ":");
-            } 
+            }
             else if (_char == '{') 
             {
                 return new JsonToken(TokenType.START_OBJ, "{");
@@ -120,7 +120,7 @@ namespace Fjson.Core
         {
             if (_index >= _jsonData.Length)
             {
-                throw new DataException("Invalid JSON input. 'null' is error  " + _char);
+                throw new DataException("Invalid JSON input. error end   " + _char);
             }
             _char = _jsonData[_index];
             _index++;
