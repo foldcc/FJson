@@ -104,12 +104,27 @@ namespace Fjson.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(_char);
+            bool isPoint = false;
+            int count = 0;
+            if (this._char != '-')
+                count++;
             do
             {
                 read();
-                if (!char.IsDigit(_char))
-                    break;
-                stringBuilder.Append(_char);
+                if (this._char == '.' && count > 0 && isPoint == false)
+                {
+                    stringBuilder.Append(this._char);
+                    isPoint = true;
+                }
+                else if (char.IsDigit(this._char))
+                {
+                    stringBuilder.Append(this._char);
+                }
+                else
+                {
+                    break; 
+                }
+                count++;
             } while (true);
             _index--;
             return new JsonToken(TokenType.NUMBER , stringBuilder.ToString());
