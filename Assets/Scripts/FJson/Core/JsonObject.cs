@@ -6,7 +6,6 @@ namespace FJson.Core
     {
         private Dictionary<string , object> jsonData = new Dictionary<string, object>();
 
-
         public void Put(string key , object value)
         {
             

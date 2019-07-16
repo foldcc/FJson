@@ -20,5 +20,15 @@ namespace Fjson.Core
         {
             return mValue;
         }
+
+        public bool IsType(TokenType tokenType)
+        {
+            return this.mType.Equals(tokenType);
+        }
+
+        public override string ToString()
+        {
+            return this.mType + " : " + this.mValue;
+        }
     }
 }

@@ -15,9 +15,10 @@ namespace Fjson.Core
         private char                             _char;
         private int                              _index;
 
-        public JsonTokenizer(string json)
+        public  JsonTokenizer(string json)
         {
             JsonTokens = new List<JsonToken>();
+            JsonTokens.Clear();
             _jsonData = json.ToCharArray();
             _char = '?';
             _index = 0;
@@ -26,6 +27,22 @@ namespace Fjson.Core
             {
                 JsonTokens.Add(parse());
             }
+        }
+
+
+        public int GetNextTokenIndex(TokenType tokenType , int startIndex)
+        {
+            if (startIndex < this.JsonTokens.Count)
+            {
+                for (int i = startIndex; i < JsonTokens.Count; i++)
+                {
+                    if (this.JsonTokens[i].IsType(tokenType))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
         }
 
         private JsonToken parse()
