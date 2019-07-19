@@ -1,6 +1,6 @@
 using System;
 
-namespace Fjson.Core
+namespace FJson.Core
 {
     public class JsonToken
     {

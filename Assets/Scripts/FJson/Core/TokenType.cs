@@ -1,4 +1,4 @@
-namespace Fjson.Core
+namespace FJson.Core
 {
     public enum TokenType
     {

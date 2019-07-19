@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using UnityEngine;
 
-namespace Fjson.Core
+namespace FJson.Core
 {
     //对json字符串分词解析
     public class JsonTokenizer
