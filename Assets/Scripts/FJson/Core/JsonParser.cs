@@ -8,23 +8,23 @@ namespace FJson.Core
         private JsonTokenizer _jsonTokenizer;
         private int _tokenIndex = 0;
 
-        public Dictionary<string,object> ParseJsonObject(string json )
+        public JsonObject ParseJsonObject(string json )
         {
             _jsonTokenizer = new JsonTokenizer(json);
             _tokenIndex = 0;
             return this.parseJsonObject();
         }
 
-        public List<object> ParseJsonArray(string json)
+        public JsonArray ParseJsonArray(string json)
         {
             _jsonTokenizer = new JsonTokenizer(json);
             _tokenIndex = 0;
             return this.parserJsonArray();
         }
 
-        private Dictionary<string,object> parseJsonObject()
+        private JsonObject parseJsonObject()
         {
-            var jsonObject = new Dictionary<string,object>();
+            var jsonObject = new JsonObject();
             
             if (_jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.START_OBJ))
             {
@@ -39,14 +39,14 @@ namespace FJson.Core
                             this._tokenIndex++;
                             if (this.IsValue())
                             {
-                                jsonObject.Add(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this._jsonTokenizer.JsonTokens[this._tokenIndex].GetTokenObject());
+                                jsonObject.Put(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this._jsonTokenizer.JsonTokens[this._tokenIndex].GetTokenObject());
                             }
                             else if(this.IsObject())
                             {
-                                jsonObject.Add(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this.parseJsonObject());
+                                jsonObject.Put(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this.parseJsonObject());
                             }else if (this.IsArray())
                             {
-                                jsonObject.Add(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this.parserJsonArray());
+                                jsonObject.Put(this._jsonTokenizer.JsonTokens[this._tokenIndex - 2].GetTokenValue() , this.parserJsonArray());
                             }
                             else
                             {
@@ -75,9 +75,9 @@ namespace FJson.Core
             return jsonObject;
         }
 
-        private List<object> parserJsonArray()
+        private JsonArray parserJsonArray()
         {
-            var jsonArray = new List<object>();
+            var jsonArray = new JsonArray();
             if (_jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.START_ARR))
             {
                 while (!this._jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.END_ARR))
