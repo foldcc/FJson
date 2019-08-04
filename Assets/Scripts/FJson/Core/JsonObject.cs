@@ -46,6 +46,11 @@ namespace FJson.Core
         {
             return (JsonObject) ObjectDict[key];
         }
+        
+        public JsonArray GetJsonArray(string key)
+        {
+            return (JsonArray) ObjectDict[key];
+        }
 
         public object GetObject(string key)
         {
@@ -72,7 +77,7 @@ namespace FJson.Core
                         }
                         else if (IsJsonArray(dictKey))
                         {
-                            
+                            dict[dictKey] = GetJsonArray(dictKey).ToArray(valueType);
                         }
                         else
                         {
@@ -81,11 +86,6 @@ namespace FJson.Core
                     }
                     obj = dict;
                 }
-                
-//                else if (objectType == typeof(object))
-//                {
-//                    
-//                }
                 //自定义类型
                 else
                 {
@@ -97,12 +97,11 @@ namespace FJson.Core
                             if (IsJsonObject(fieldInfo.Name))
                             {
                                 //自定义对象
-                                object value = GetJsonObject(fieldInfo.Name).ToObject(fieldInfo.FieldType);
-                                fieldInfo.SetValue(obj, value);
+                                fieldInfo.SetValue(obj, GetJsonObject(fieldInfo.Name).ToObject(fieldInfo.FieldType));
                             }
                             else if (IsJsonArray(fieldInfo.Name))
                             {
-                                //TODO 反序列化为数组类型的值
+                                fieldInfo.SetValue(obj, GetJsonArray(fieldInfo.Name).ToArray(fieldInfo.FieldType));
                             }
                             else
                             {
