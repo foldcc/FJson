@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace FJson.Core
 {
@@ -47,7 +48,6 @@ namespace FJson.Core
                     listObject = (IList) Activator.CreateInstance(objectType);
                 }
                 
-                
                 if (Count > 0)
                 {
                     int count = 0;
@@ -67,10 +67,10 @@ namespace FJson.Core
                             value = element;
                         }
                         
-
                         if (isArray)
                         {
-                            listObject[count] = Convert.ChangeType(value , elementType ?? throw new InvalidOperationException());
+                            listObject[count] = Convert.ChangeType(value , 
+                                elementType ?? throw new InvalidOperationException());
                             
                         }
                         else
@@ -84,5 +84,46 @@ namespace FJson.Core
             }
             return listObject;
         }
+        
+        public string ToJson(){
+            StringBuilder sb = new StringBuilder();
+            sb.Append('[');
+            int count = 0;
+            foreach (var mValue in this.ArrayObject)
+            {
+                if (mValue == null)
+                {
+                    sb.Append("null");
+                }
+                else if (mValue.GetType() == typeof(JsonObject))
+                {
+                    sb.Append(((JsonObject)mValue).ToJson());
+                }
+                else if (mValue.GetType() == typeof(JsonArray))
+                {
+                    sb.Append(((JsonArray)mValue).ToJson());
+                }
+                else
+                {
+                    
+                    if (mValue.GetType().IsValueType)
+                    {
+                        sb.Append(mValue);
+                    }
+                    else
+                    {
+                        sb.Append('"');
+                        sb.Append(mValue);
+                        sb.Append('"');
+                    }
+                }
+                if (count < Count - 1)
+                    sb.Append(',');
+                count++;
+            }
+            sb.Append(']');
+            return sb.ToString();
+        }
+
     }
 }

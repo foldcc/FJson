@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
 namespace FJson.Core
 {
@@ -115,6 +116,51 @@ namespace FJson.Core
                 return obj;
             }
             return default;
+        }
+        
+        public string ToJson(){
+            StringBuilder sb = new StringBuilder();
+            sb.Append('{');
+            int count = 0;
+            foreach (var mDictKey in this.ObjectDict.Keys)
+            {
+                sb.Append('"');
+                sb.Append(mDictKey);
+                sb.Append('"');
+                sb.Append(':');
+                
+                if (IsJsonObject(mDictKey))
+                {
+                    sb.Append(GetJsonObject(mDictKey).ToJson());
+                }
+                else if (IsJsonArray(mDictKey))
+                {
+                    sb.Append(GetJsonArray(mDictKey).ToJson());
+                }
+                else
+                {
+                    if (this.ObjectDict[mDictKey] == null)
+                    {
+                        sb.Append("null");
+                    }
+                    else if (this.ObjectDict[mDictKey].GetType().IsValueType)
+                    {
+                        sb.Append(this.ObjectDict[mDictKey]);
+                    }
+                    else
+                    {
+                        sb.Append('"');
+                        sb.Append(this.ObjectDict[mDictKey]);
+                        sb.Append('"');
+                    }
+                }
+
+                if (count < Count - 1)
+                    sb.Append(',');
+                count++;
+            }
+            sb.Append('}');
+            return sb.ToString();
         }
     }
 }

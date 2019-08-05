@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -140,5 +141,6 @@ namespace FJson.Core
             }
             return false;
         }
+        
     }
 }
