@@ -9,6 +9,18 @@ namespace FJson.Core
         private JsonTokenizer _jsonTokenizer;
         private int _tokenIndex = 0;
 
+        public IJsonDemoder ParseJson(string json)
+        {
+            this._jsonTokenizer = new JsonTokenizer(json);
+            this._tokenIndex = 0;
+            if (this.IsArray())
+            {
+                return this.parserJsonArray();
+            }
+
+            return this.parseJsonObject();
+        }
+
         public JsonObject ParseJsonObject(string json )
         {
             _jsonTokenizer = new JsonTokenizer(json);

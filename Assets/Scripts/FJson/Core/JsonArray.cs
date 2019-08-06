@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FJson.Core
 {
-    public class JsonArray
+    public class JsonArray : IJsonDemoder
     {
         private List<object> ArrayObject = new List<object>();
         
@@ -19,7 +19,7 @@ namespace FJson.Core
             ArrayObject.Add(value);
         }
 
-        public object ToArray(Type objectType) 
+        public object Deserialization(Type objectType) 
         {
             IList listObject = null;
 
@@ -38,7 +38,6 @@ namespace FJson.Core
                 else
                     elementType = objectType.GenericTypeArguments[0];
                 
-                
                 if (objectType.IsArray)
                 {
                     listObject = Array.CreateInstance(elementType ?? throw new InvalidOperationException() , Count);
@@ -56,11 +55,11 @@ namespace FJson.Core
                         object value = null;
                         if (element.GetType() == typeof(JsonArray))
                         {
-                            value = ((JsonArray) element).ToArray(elementType);
+                            value = ((JsonArray) element).Deserialization(elementType);
                         }
                         else if (element.GetType() == typeof(JsonObject))
                         {
-                            value = ((JsonObject) element).ToObject(elementType);
+                            value = ((JsonObject) element).Deserialization(elementType);
                         }
                         else
                         {
@@ -71,7 +70,6 @@ namespace FJson.Core
                         {
                             listObject[count] = Convert.ChangeType(value , 
                                 elementType ?? throw new InvalidOperationException());
-                            
                         }
                         else
                         {
@@ -85,7 +83,7 @@ namespace FJson.Core
             return listObject;
         }
         
-        public string ToJson(){
+        public string Serialization(){
             StringBuilder sb = new StringBuilder();
             sb.Append('[');
             int count = 0;
@@ -97,16 +95,15 @@ namespace FJson.Core
                 }
                 else if (mValue.GetType() == typeof(JsonObject))
                 {
-                    sb.Append(((JsonObject)mValue).ToJson());
+                    sb.Append(((JsonObject)mValue).Serialization());
                 }
                 else if (mValue.GetType() == typeof(JsonArray))
                 {
-                    sb.Append(((JsonArray)mValue).ToJson());
+                    sb.Append(((JsonArray)mValue).Serialization());
                 }
                 else
                 {
-                    
-                    if (mValue.GetType().IsValueType)
+                    if (mValue.GetType().IsPrimitive && mValue.GetType() != typeof(char) && mValue.GetType() != typeof(Char))
                     {
                         sb.Append(mValue);
                     }

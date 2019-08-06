@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FJson.Core
 {
-    public class JsonObject
+    public class JsonObject : IJsonDemoder
     {
         private Dictionary<string, object> ObjectDict = new Dictionary<string, object>();
 
@@ -58,7 +58,7 @@ namespace FJson.Core
             return ObjectDict[key];
         }
         
-        public object ToObject(Type objectType)
+        public object Deserialization(Type objectType)
         {
             if (Count > 0)
             {
@@ -74,11 +74,11 @@ namespace FJson.Core
                     {
                         if (IsJsonObject(dictKey))
                         {
-                            dict[dictKey] = GetJsonObject(dictKey).ToObject(valueType);
+                            dict[dictKey] = GetJsonObject(dictKey).Deserialization(valueType);
                         }
                         else if (IsJsonArray(dictKey))
                         {
-                            dict[dictKey] = GetJsonArray(dictKey).ToArray(valueType);
+                            dict[dictKey] = GetJsonArray(dictKey).Deserialization(valueType);
                         }
                         else
                         {
@@ -98,11 +98,11 @@ namespace FJson.Core
                             if (IsJsonObject(fieldInfo.Name))
                             {
                                 //自定义对象
-                                fieldInfo.SetValue(obj, GetJsonObject(fieldInfo.Name).ToObject(fieldInfo.FieldType));
+                                fieldInfo.SetValue(obj, GetJsonObject(fieldInfo.Name).Deserialization(fieldInfo.FieldType));
                             }
                             else if (IsJsonArray(fieldInfo.Name))
                             {
-                                fieldInfo.SetValue(obj, GetJsonArray(fieldInfo.Name).ToArray(fieldInfo.FieldType));
+                                fieldInfo.SetValue(obj, GetJsonArray(fieldInfo.Name).Deserialization(fieldInfo.FieldType));
                             }
                             else
                             {
@@ -118,7 +118,7 @@ namespace FJson.Core
             return default;
         }
         
-        public string ToJson(){
+        public string Serialization(){
             StringBuilder sb = new StringBuilder();
             sb.Append('{');
             int count = 0;
@@ -131,11 +131,11 @@ namespace FJson.Core
                 
                 if (IsJsonObject(mDictKey))
                 {
-                    sb.Append(GetJsonObject(mDictKey).ToJson());
+                    sb.Append(GetJsonObject(mDictKey).Serialization());
                 }
                 else if (IsJsonArray(mDictKey))
                 {
-                    sb.Append(GetJsonArray(mDictKey).ToJson());
+                    sb.Append(GetJsonArray(mDictKey).Serialization());
                 }
                 else
                 {
@@ -143,7 +143,7 @@ namespace FJson.Core
                     {
                         sb.Append("null");
                     }
-                    else if (this.ObjectDict[mDictKey].GetType().IsValueType)
+                    else if (this.ObjectDict[mDictKey].GetType().IsPrimitive && ObjectDict[mDictKey].GetType() != typeof(char) && ObjectDict[mDictKey].GetType() != typeof(Char))
                     {
                         sb.Append(this.ObjectDict[mDictKey]);
                     }
