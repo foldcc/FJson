@@ -53,6 +53,7 @@ namespace FJson.Core
                     foreach (var element in ArrayObject)
                     {
                         object value = null;
+                        
                         if (element.GetType() == typeof(JsonArray))
                         {
                             value = ((JsonArray) element).Deserialization(elementType);
@@ -65,16 +66,20 @@ namespace FJson.Core
                         {
                             value = element;
                         }
+
+                        if (elementType != typeof(object))
+                        {
+                            value = Convert.ChangeType(value , 
+                                elementType ?? throw new InvalidOperationException());
+                        }
                         
                         if (isArray)
                         {
-                            listObject[count] = Convert.ChangeType(value , 
-                                elementType ?? throw new InvalidOperationException());
+                            listObject[count] = value;
                         }
                         else
                         {
-                            listObject.Add(Convert.ChangeType(value,
-                                elementType ?? throw new InvalidOperationException()));
+                            listObject.Add(value);
                         }
                         count++;
                     }

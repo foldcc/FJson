@@ -164,7 +164,7 @@ namespace FJson.Core
 
         private bool isNull()
         {
-            if (_char == 'n')
+            if (_char == 'n' || _char == 'N')
             {
                 read();
                 if (_char == 'u')
@@ -186,7 +186,7 @@ namespace FJson.Core
 
         private bool isTrue()
         {
-            if (_char == 't')
+            if (_char == 't' || _char == 'T')
             {
                 read();
                 if (_char == 'r')
@@ -208,7 +208,7 @@ namespace FJson.Core
 
         private bool isFalse()
         {
-            if (_char == 'f')
+            if (_char == 'f' || _char == 'F')
             {
                 read();
                 if (_char == 'a')

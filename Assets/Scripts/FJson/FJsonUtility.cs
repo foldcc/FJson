@@ -14,7 +14,7 @@ namespace FJson
             IJsonDemoder mJsonDemoder = null;
             if (IsArray(value))
                 mJsonDemoder = CreateJsonArray(value);
-            if (IsObject(value))
+            else if (IsObject(value))
                 mJsonDemoder = CreateJsonObject(value);
             return mJsonDemoder != null ? mJsonDemoder.Serialization() : value.ToString();
         }
@@ -81,7 +81,8 @@ namespace FJson
         {
             JsonArray mJsonArray = new JsonArray();
             {
-                foreach (var elementValue in (IList) value)
+                IList mList = (IList) value;
+                foreach (var elementValue in mList)
                 {
                     if (IsArray(elementValue))
                     {

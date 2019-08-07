@@ -87,6 +87,10 @@ namespace FJson.Core
                     }
                     obj = dict;
                 }
+                else if (objectType == typeof(object))
+                {
+                    obj = this;
+                }
                 //自定义类型
                 else
                 {
