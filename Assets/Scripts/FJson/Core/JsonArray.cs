@@ -53,24 +53,26 @@ namespace FJson.Core
                     foreach (var element in ArrayObject)
                     {
                         object value = null;
-                        
-                        if (element.GetType() == typeof(JsonArray))
+                        if (element != null)
                         {
-                            value = ((JsonArray) element).Deserialization(elementType);
-                        }
-                        else if (element.GetType() == typeof(JsonObject))
-                        {
-                            value = ((JsonObject) element).Deserialization(elementType);
-                        }
-                        else
-                        {
-                            value = element;
-                        }
+                            if (element.GetType() == typeof(JsonArray))
+                            {
+                                value = ((JsonArray) element).Deserialization(elementType);
+                            }
+                            else if (element.GetType() == typeof(JsonObject))
+                            {
+                                value = ((JsonObject) element).Deserialization(elementType);
+                            }
+                            else
+                            {
+                                value = element;
+                            }
 
-                        if (elementType != typeof(object))
-                        {
-                            value = Convert.ChangeType(value , 
-                                elementType ?? throw new InvalidOperationException());
+                            if (elementType != typeof(object))
+                            {
+                                value = Convert.ChangeType(value , 
+                                    elementType ?? throw new InvalidOperationException());
+                            }
                         }
                         
                         if (isArray)

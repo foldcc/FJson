@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using FJson.Core;
-using UnityEngine;
 
 namespace FJson
 {
@@ -29,7 +27,17 @@ namespace FJson
             return default;
         }
 
-        
+        public static T Convert<T>(object value)
+        {
+            IJsonDemoder mJsonDemoder = null;
+            if (IsArray(value))
+                mJsonDemoder = CreateJsonArray(value);
+            else if (IsObject(value))
+                mJsonDemoder = CreateJsonObject(value);
+            
+            return (T)mJsonDemoder?.Deserialization(typeof(T));
+        }
+
         private static JsonObject CreateJsonObject(object value)
         {
             JsonObject mJsonObject = new JsonObject();
