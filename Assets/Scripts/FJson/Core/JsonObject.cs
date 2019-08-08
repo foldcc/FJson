@@ -149,7 +149,14 @@ namespace FJson.Core
                     }
                     else if (this.ObjectDict[mDictKey].GetType().IsPrimitive && ObjectDict[mDictKey].GetType() != typeof(char) && ObjectDict[mDictKey].GetType() != typeof(Char))
                     {
-                        sb.Append(this.ObjectDict[mDictKey]);
+                        if (this.ObjectDict[mDictKey] is bool)
+                        {
+                            sb.Append(this.ObjectDict[mDictKey].ToString().ToLower());
+                        }
+                        else
+                        {
+                            sb.Append(this.ObjectDict[mDictKey]);
+                        }
                     }
                     else
                     {
