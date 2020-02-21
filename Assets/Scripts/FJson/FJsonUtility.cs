@@ -7,6 +7,10 @@ namespace FJson
 {
     public class FJsonUtility
     {
+
+        public static BindingFlags SerializationAttr = BindingFlags.Instance | BindingFlags.Public;
+        public static BindingFlags DeserializationAttr = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        
         public static string ToJson(object value)
         {
             IJsonDemoder mJsonDemoder = null;
@@ -63,7 +67,7 @@ namespace FJson
                 }
                 else
                 {
-                    FieldInfo[] mFieldInfos = value.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    FieldInfo[] mFieldInfos = value.GetType().GetFields(FJsonUtility.SerializationAttr);
                     foreach (var mFieldInfo in mFieldInfos)
                     {
                         var fieldValue = mFieldInfo.GetValue(value);

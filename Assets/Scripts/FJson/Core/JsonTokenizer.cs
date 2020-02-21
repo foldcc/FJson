@@ -22,70 +22,60 @@ namespace FJson.Core
             _char = '?';
             _index = 0;
 
-            while (_index < _jsonData.Length)
+            while (_index < _jsonData.Length && this.clearSpace())
             {
-                JsonTokens.Add(parse());
+                this.JsonTokens.Add(this.parse());
             }
         }
 
-
-        public int GetNextTokenIndex(TokenType tokenType , int startIndex)
+        private bool clearSpace()
         {
-            if (startIndex < this.JsonTokens.Count)
+            do
             {
-                for (int i = startIndex; i < JsonTokens.Count; i++)
-                {
-                    if (this.JsonTokens[i].IsType(tokenType))
-                    {
-                        return i;
-                    }
-                }
-            }
-            return -1;
+                this.read();
+                if (this._index >= this._jsonData.Length)
+                    return false;
+            } while (isSplace());
+            return true;
         }
 
         private JsonToken parse()
         {
-            do
-            {
-                read();
-            } while (isSplace());
-
             if (isNull())
             {
-                return new JsonToken(TokenType.NULL , "null");
+                return new JsonToken(TokenType.NULL , null);
             }
             else if (_char == ',') 
             {
-                return new JsonToken(TokenType.COMMA, ",");
+                return new JsonToken(TokenType.COMMA, null);
             }
             else if (_char == ':') 
             {
-                return new JsonToken(TokenType.COLON, ":");
+                return new JsonToken(TokenType.COLON, null);
             }
             else if (_char == '{') 
             {
-                return new JsonToken(TokenType.START_OBJ, "{");
+                return new JsonToken(TokenType.START_OBJ, null);
             } 
             else if (_char == '[') 
             {
-                 return new JsonToken(TokenType.START_ARR, "[");
+                 return new JsonToken(TokenType.START_ARR, null);
             } 
             else if (_char == ']') 
             {
-                return new JsonToken(TokenType.END_ARR, "]");
+                return new JsonToken(TokenType.END_ARR, null);
             }
             else if (_char == '}')
             {
-                return new JsonToken(TokenType.END_OBJ, "}");
+                return new JsonToken(TokenType.END_OBJ, null);
             }
             else if (isTrue()) 
             {
-                 return new JsonToken(TokenType.BOOL, "true");
+                 return new JsonToken(TokenType.BOOL, JsonToken.TRUE);
             }
             else if (isFalse()) 
             {
-                 return new JsonToken(TokenType.BOOL, "false"); 
+                 return new JsonToken(TokenType.BOOL, JsonToken.FALSE); 
             }
             else if (_char == '"') 
             {
@@ -97,7 +87,7 @@ namespace FJson.Core
             }
             else if (_char == -1)
             {
-                return new JsonToken(TokenType.END_DOC, "EOF");
+                return new JsonToken(TokenType.END_DOC, null);
             }
             throw new DataException("Invalid JSON input : " + _char);
         }
@@ -107,7 +97,7 @@ namespace FJson.Core
             StringBuilder stringBuilder = new StringBuilder();
             do
             {
-                read();
+                this.read();
                 if (_char == '"')
                     break;
                 stringBuilder.Append(_char);
@@ -126,7 +116,7 @@ namespace FJson.Core
                 count++;
             do
             {
-                read();
+                this.read();
                 if (this._char == '.' && count > 0 && isPoint == false)
                 {
                     stringBuilder.Append(this._char);
@@ -151,7 +141,7 @@ namespace FJson.Core
         {
             if (_index >= _jsonData.Length)
             {
-                throw new DataException("Invalid JSON input. error end   " + _char);
+                throw new DataException("json异常结尾 Invalid JSON input. error end   " + _char);
             }
             _char = _jsonData[_index];
             _index++;
@@ -166,13 +156,13 @@ namespace FJson.Core
         {
             if (_char == 'n' || _char == 'N')
             {
-                read();
+                this.read();
                 if (_char == 'u')
                 {
-                    read();
+                    this.read();
                     if (_char == 'l')
                     {
-                        read();
+                        this.read();
                         if (_char == 'l')
                         {
                             return true;
@@ -188,13 +178,13 @@ namespace FJson.Core
         {
             if (_char == 't' || _char == 'T')
             {
-                read();
+                this.read();
                 if (_char == 'r')
                 {
-                    read();
+                    this.read();
                     if (_char == 'u')
                     {
-                        read();
+                        this.read();
                         if (_char == 'e')
                         {
                             return true;
@@ -210,16 +200,16 @@ namespace FJson.Core
         {
             if (_char == 'f' || _char == 'F')
             {
-                read();
+                this.read();
                 if (_char == 'a')
                 {
-                    read();
+                    this.read();
                     if (_char == 'l')
                     {
-                        read();
+                        this.read();
                         if (_char == 's')
                         {
-                            read();
+                            this.read();
                             if (_char == 'e')
                             {
                                 return true;
@@ -240,6 +230,5 @@ namespace FJson.Core
             }
             return false;
         }
-        
     }
 }

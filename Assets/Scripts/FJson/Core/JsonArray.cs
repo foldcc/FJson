@@ -7,19 +7,17 @@ namespace FJson.Core
 {
     public class JsonArray : IJsonDemoder
     {
+
         private List<object> ArrayObject = new List<object>();
-        
+
         public int Count
         {
             get { return ArrayObject.Count; }
         }
 
-        public void Add(object value)
-        {
-            ArrayObject.Add(value);
-        }
+        public void Add(object value) { ArrayObject.Add(value); }
 
-        public object Deserialization(Type objectType) 
+        public object Deserialization(Type objectType)
         {
             IList listObject = null;
 
@@ -27,26 +25,26 @@ namespace FJson.Core
             if (typeof(IList).IsAssignableFrom(objectType))
             {
                 Type elementType = null;
-                bool isArray = false;
+                bool isArray     = false;
                 //Array
                 if (typeof(Array).IsAssignableFrom(objectType))
                 {
                     elementType = objectType.GetElementType();
-                    isArray = true;
+                    isArray     = true;
                 }
                 //泛型类
                 else
                     elementType = objectType.GenericTypeArguments[0];
-                
+
                 if (objectType.IsArray)
                 {
-                    listObject = Array.CreateInstance(elementType ?? throw new InvalidOperationException() , Count);
+                    listObject = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), Count);
                 }
                 else
                 {
                     listObject = (IList) Activator.CreateInstance(objectType);
                 }
-                
+
                 if (Count > 0)
                 {
                     int count = 0;
@@ -70,11 +68,10 @@ namespace FJson.Core
 
                             if (elementType != typeof(object))
                             {
-                                value = Convert.ChangeType(value , 
-                                    elementType ?? throw new InvalidOperationException());
+                                value = Convert.ChangeType(value, elementType ?? throw new InvalidOperationException());
                             }
                         }
-                        
+
                         if (isArray)
                         {
                             listObject[count] = value;
@@ -83,14 +80,17 @@ namespace FJson.Core
                         {
                             listObject.Add(value);
                         }
+
                         count++;
                     }
                 }
             }
+
             return listObject;
         }
-        
-        public string Serialization(){
+
+        public string Serialization()
+        {
             StringBuilder sb = new StringBuilder();
             sb.Append('[');
             int count = 0;
@@ -102,17 +102,24 @@ namespace FJson.Core
                 }
                 else if (mValue.GetType() == typeof(JsonObject))
                 {
-                    sb.Append(((JsonObject)mValue).Serialization());
+                    sb.Append(((JsonObject) mValue).Serialization());
                 }
                 else if (mValue.GetType() == typeof(JsonArray))
                 {
-                    sb.Append(((JsonArray)mValue).Serialization());
+                    sb.Append(((JsonArray) mValue).Serialization());
                 }
                 else
                 {
                     if (mValue.GetType().IsPrimitive && mValue.GetType() != typeof(char) && mValue.GetType() != typeof(Char))
                     {
-                        sb.Append(mValue);
+                        if (mValue is bool)
+                        {
+                            sb.Append(mValue.ToString().ToLower());
+                        }
+                        else
+                        {
+                            sb.Append(mValue);
+                        }
                     }
                     else
                     {
@@ -121,10 +128,12 @@ namespace FJson.Core
                         sb.Append('"');
                     }
                 }
+
                 if (count < Count - 1)
                     sb.Append(',');
                 count++;
             }
+
             sb.Append(']');
             return sb.ToString();
         }

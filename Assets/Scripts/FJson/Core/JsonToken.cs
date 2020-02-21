@@ -4,6 +4,11 @@ namespace FJson.Core
 {
     public class JsonToken
     {
+        
+        public static string TRUE = "true";
+        public static string FALSE = "false";
+        public static string NULL = "null";
+        
         private TokenType mType;
         private string mValue;
 
@@ -46,7 +51,7 @@ namespace FJson.Core
                 case TokenType.COLON:
                     return this.mValue;
                 case TokenType.BOOL:
-                    return bool.Parse(this.mValue);
+                    return this.mValue.Equals(TRUE);
                 case TokenType.END_DOC:
                     return this.mValue;
                 default:

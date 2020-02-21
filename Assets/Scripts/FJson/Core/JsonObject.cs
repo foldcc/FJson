@@ -22,7 +22,7 @@ namespace FJson.Core
 
         public bool IsJsonObject(string key)
         {
-            if (ObjectDict.ContainsKey(key) && ObjectDict[key] is JsonObject)
+            if (ObjectDict[key] is JsonObject)
             {
                 return true;
             }
@@ -31,7 +31,7 @@ namespace FJson.Core
         
         public bool IsJsonArray(string key)
         {
-            if (ObjectDict.ContainsKey(key) && ObjectDict[key] is JsonArray)
+            if (ObjectDict[key] is JsonArray)
             {
                 return true;
             }
@@ -94,7 +94,7 @@ namespace FJson.Core
                 //自定义类型
                 else
                 {
-                    var mFields = objectType.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    var mFields = objectType.GetFields(FJsonUtility.DeserializationAttr);
                     foreach (var fieldInfo in mFields)
                     {
                         if (ContainsKey(fieldInfo.Name) )
@@ -128,6 +128,7 @@ namespace FJson.Core
             int count = 0;
             foreach (var mDictKey in this.ObjectDict.Keys)
             {
+                var mValue = this.ObjectDict[mDictKey];
                 sb.Append('"');
                 sb.Append(mDictKey);
                 sb.Append('"');
@@ -143,25 +144,25 @@ namespace FJson.Core
                 }
                 else
                 {
-                    if (this.ObjectDict[mDictKey] == null)
+                    if (mValue == null)
                     {
                         sb.Append("null");
                     }
-                    else if (this.ObjectDict[mDictKey].GetType().IsPrimitive && ObjectDict[mDictKey].GetType() != typeof(char) && ObjectDict[mDictKey].GetType() != typeof(Char))
+                    else if (mValue.GetType().IsPrimitive && mValue.GetType() != typeof(char) && mValue.GetType() != typeof(Char))
                     {
-                        if (this.ObjectDict[mDictKey] is bool)
+                        if (mValue is bool)
                         {
-                            sb.Append(this.ObjectDict[mDictKey].ToString().ToLower());
+                            sb.Append(mValue.ToString().ToLower());
                         }
                         else
                         {
-                            sb.Append(this.ObjectDict[mDictKey]);
+                            sb.Append(mValue);
                         }
                     }
                     else
                     {
                         sb.Append('"');
-                        sb.Append(this.ObjectDict[mDictKey]);
+                        sb.Append(mValue);
                         sb.Append('"');
                     }
                 }
