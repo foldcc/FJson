@@ -14,7 +14,11 @@ namespace FJson
         public static string ToJson(object value)
         {
             IJsonDemoder mJsonDemoder = null;
-            if (IsArray(value))
+            if (value is IJsonDemoder)
+            {
+                mJsonDemoder = (IJsonDemoder)value;
+            }
+            else if (IsArray(value))
                 mJsonDemoder = CreateJsonArray(value);
             else if (IsObject(value))
                 mJsonDemoder = CreateJsonObject(value);
@@ -24,12 +28,18 @@ namespace FJson
         public static T ToObject<T>(string json)
         {
             var jsonObject = new JsonParser().ParseJson(json);
+            if (typeof(IJsonDemoder).IsAssignableFrom(typeof(T)))
+            {
+                return (T)jsonObject;
+            }
             if (jsonObject != null)
             {
                 return (T)jsonObject.Deserialization(typeof(T));
             }
             return default;
         }
+
+        public static JsonObject ToObject(string json) { return (JsonObject)new JsonParser().ParseJson(json); }
 
         public static T Convert<T>(object value)
         {
@@ -40,6 +50,31 @@ namespace FJson
                 mJsonDemoder = CreateJsonObject(value);
             
             return (T)mJsonDemoder?.Deserialization(typeof(T));
+        }
+
+        /// <summary>
+        /// 将json字符串转换为中间类型
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public static IJsonDemoder ToJsonDemoderJson(string json)
+        {
+            return new JsonParser().ParseJson(json);
+        }
+        
+        /// <summary>
+        /// 将任意object对象转换为中间类型
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IJsonDemoder ToJsonDemoder(object value)
+        {
+            IJsonDemoder mJsonDemoder = null;
+            if (IsArray(value))
+                mJsonDemoder = CreateJsonArray(value);
+            else if (IsObject(value))
+                mJsonDemoder = CreateJsonObject(value);
+            return mJsonDemoder;
         }
 
         private static JsonObject CreateJsonObject(object value)

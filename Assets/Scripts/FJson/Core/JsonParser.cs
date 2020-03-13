@@ -93,6 +93,11 @@ namespace FJson.Core
             var jsonArray = new JsonArray();
             if (_jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.START_ARR))
             {
+                if (_jsonTokenizer.JsonTokens[this._tokenIndex + 1].IsType(TokenType.END_ARR))
+                {
+                    this._tokenIndex++;
+                    return jsonArray;
+                }
                 while (!this._jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.END_ARR))
                 {
                     this._tokenIndex++;
@@ -111,14 +116,13 @@ namespace FJson.Core
                     {
                         throw new DataException("Invalid JSON input. is error Value " + this._jsonTokenizer.JsonTokens[this._tokenIndex]);  
                     }
-
+                    
                     //COMMA判断
                     this._tokenIndex++;
                     if (!this._jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.COMMA) && !this._jsonTokenizer.JsonTokens[this._tokenIndex].IsType(TokenType.END_ARR))
                     {
                         throw new DataException("Invalid JSON input. error end " + this._jsonTokenizer.JsonTokens[this._tokenIndex]);
                     }
-                    
                 }
             }
             return jsonArray;

@@ -32,12 +32,12 @@ namespace FJson.Core
         {
             do
             {
-                this.read();
-                if (this._index >= this._jsonData.Length)
+                this.read();   
+                if (this._index > this._jsonData.Length)
                     return false;
             } while (isSplace());
             return true;
-        }
+        }  
 
         private JsonToken parse()
         {
@@ -98,8 +98,15 @@ namespace FJson.Core
             do
             {
                 this.read();
-                if (_char == '"')
+                if (_char == '\\')
+                {
+                    stringBuilder.Append(_char);
+                    this.read();
+                }
+                else if (this._char == '"')
+                {
                     break;
+                }
                 stringBuilder.Append(_char);
             } while (true);
 

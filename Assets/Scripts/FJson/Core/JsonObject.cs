@@ -10,6 +10,11 @@ namespace FJson.Core
     {
         private Dictionary<string, object> ObjectDict = new Dictionary<string, object>();
 
+        public void Clear()
+        {
+            this.ObjectDict.Clear();
+        }
+
         public int Count
         {
             get { return ObjectDict.Count; }
@@ -40,12 +45,18 @@ namespace FJson.Core
 
         public bool ContainsKey(string key)
         {
-            return ObjectDict.ContainsKey(key);
+            return this.ObjectDict.ContainsKey(key);
         }
 
         public JsonObject GetJsonObject(string key)
         {
-            return (JsonObject) ObjectDict[key];
+            return (JsonObject) this.ObjectDict[key];
+        }
+        
+        public T ToObject<T>(string key)
+        {
+            var td =  this.GetJsonObject(key);
+            return (T)td.Deserialization(typeof(T));
         }
         
         public JsonArray GetJsonArray(string key)
@@ -56,6 +67,11 @@ namespace FJson.Core
         public object GetObject(string key)
         {
             return ObjectDict[key];
+        }
+        
+        public T GetObject<T>(string key)
+        {
+            return (T)ObjectDict[key];
         }
         
         public object Deserialization(Type objectType)
@@ -82,7 +98,7 @@ namespace FJson.Core
                         }
                         else
                         {
-                            dict[dictKey] = Convert.ChangeType(GetObject(dictKey), valueType);
+                            dict[dictKey] = Convert.ChangeType(this.GetObject(dictKey), valueType);
                         }
                     }
                     obj = dict;

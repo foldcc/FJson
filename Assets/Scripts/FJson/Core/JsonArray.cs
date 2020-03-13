@@ -20,7 +20,6 @@ namespace FJson.Core
         public object Deserialization(Type objectType)
         {
             IList listObject = null;
-
             //数组类型
             if (typeof(IList).IsAssignableFrom(objectType))
             {
